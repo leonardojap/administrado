@@ -1,0 +1,103 @@
+# docker-compose.yml
+version: '3'
+services:
+    # Api Laravel
+    backend:
+        build:
+            context: ./backend
+            dockerfile: ./Dockerfile
+            args:
+                - user=laravel
+                - uid=1000
+        image: course-api
+        container_name: course-api
+        restart: unless-stopped
+        tty: true
+        env_file:
+            - ./backend/.env
+        working_dir: /var/www
+        volumes:
+            - ./backend:/var/www
+        networks:
+            - app-network
+        depends_on:
+            - webserver
+            - db
+    # Frontend angular
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: ./Dockerfile
+        image: course-frontend
+        container_name: course-frontend
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "4200:80"
+        volumes:
+            - ./frontend:/var/www
+        networks:
+            - app-network
+        depends_on:
+            - backend
+
+    # Server Nginx
+    webserver:
+        image: nginx:alpine
+        container_name: nginx_webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "8000:80"
+        volumes:
+            - ./backend:/var/www/
+            - ./nginx/conf.d/default.config:/etc/nginx/conf.d/default.conf
+        networks:
+            - app-network
+
+    # Database
+    db:
+        image: mysql:5.7.22
+        container_name: database-api
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: courses
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - dbdata:/var/lib/mysql/
+        networks:
+            - app-network
+        depends_on:
+            - webserver
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_USER: root
+            PMA_PASSWORD: root
+        ports:
+            - "8080:80"
+        networks:
+            - app-network
+        depends_on:
+            - db
+
+# Redes
+networks:
+    app-network:
+        driver: bridge
+
+# Volumes
+volumes:
+    dbdata:
+        driver: local
