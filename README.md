@@ -1,6 +1,6 @@
 # Courses test 
 
-Descripción breve del proyecto.
+Proyecto base, de manejo de cursos, laravel-angular, CRUD de estudiantes, CRUD de cursos, manejo de cursos a nivel profesor/estudiantes, inscripcion y horarios
 
 ## Requisitos
 
