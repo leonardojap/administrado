@@ -15,8 +15,8 @@ Descripción breve del proyecto.
 git clone <url del repositorio>
 cd <nombre del directorio del proyecto>
 ```
-2. add you env file
-3. Run the following command to build the containers and start the services:
+2. Agrega tu archivo .env en la carpeta raiz de laravel, mirar el ejemplo en .env.example
+3. Corre el siguiente comando para construir y correr el proyecto con docker:
 ```bash
 docker-compose build
 
@@ -24,7 +24,7 @@ docker-compose up -d
 
 docker-compose exec backend sh
 ```
-4. Run the following command to install the dependencies:
+4. Una vez ejecurtado el ultimo comando, ejecutar los siguientes comandos en la misma consola:
 ```bash
 composer install
 php artisan key:generate
